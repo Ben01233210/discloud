@@ -73,7 +73,7 @@
      */
     function maybeEnableButtons() {
         if (gapiInited && gisInited) {
-            document.getElementById('authorize_button').style.visibility = 'visible';
+            authorizeButtonVisible = true;
         }
     }
 
@@ -85,8 +85,7 @@
             if (resp.error !== undefined) {
                 throw (resp);
             }
-            document.getElementById('signout_button').style.visibility = 'visible';
-            document.getElementById('authorize_button').innerText = 'Refresh';
+            signoutButtonVisible = true;
             await initDatabase();
         };
 
@@ -108,8 +107,7 @@
         if (token !== null) {
             google.accounts.oauth2.revoke(token.access_token);
             gapi.client.setToken(null);
-            document.getElementById('authorize_button').innerText = 'Authorize';
-            document.getElementById('signout_button').style.visibility = 'hidden';
+            authorizeButtonVisible = false;
         }
     }
 
@@ -194,8 +192,11 @@
             videos, and more. Experience the convenience and flexibility of
             cloud storage with Discloud.
         </p>
-        <Button on:click={handleAuthClick} >Sign up</Button>
-        <Button href="/login">Login</Button>
-        <button on:click={handleAuthClick} style:visibility={authorizeButtonVisible ? 'visible' : 'hidden'}>Sign up</button>
+        {#if authorizeButtonVisible}
+            <Button on:click={handleAuthClick} >Authorize</Button>
+        {/if}
+        {#if signoutButtonVisible}
+            <Button on:click={handleSignoutClick} >Sign out</Button>
+        {/if}
     </Card.Root>
 </div>
