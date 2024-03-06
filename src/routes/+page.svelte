@@ -156,7 +156,7 @@
     }
 
     async function webhookExists(): Promise<Folder | null> {
-        if (!await fileExists(DATABASE_FILE_NAME) != null) {
+        if (await fileExists(DATABASE_FILE_NAME) != null) {
             return null;
         }
 
