@@ -3,6 +3,8 @@
 
     import * as Card from "$lib/components/ui/card";
 
+    
+
     import {onMount} from 'svelte';
 
 
@@ -192,11 +194,6 @@
             videos, and more. Experience the convenience and flexibility of
             cloud storage with Discloud.
         </p>
-        {#if authorizeButtonVisible}
-            <Button on:click={handleAuthClick} >Authorize</Button>
-        {/if}
-        {#if signoutButtonVisible}
-            <Button on:click={handleSignoutClick} >Sign out</Button>
-        {/if}
+        <Button on:click={handleAuthClick} disabled={!authorizeButtonVisible}>Login</Button>
     </Card.Root>
 </div>
