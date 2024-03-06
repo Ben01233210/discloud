@@ -1,12 +1,12 @@
 <script lang="ts">
     import { Button } from "$lib/components/ui/button";
+    import * as database from "$lib/Database";
 
     import * as Card from "$lib/components/ui/card";
-
     
 
     import {onMount} from 'svelte';
-
+    import type {_File, Folder} from "$lib/Database";
 
     const DATABASE_FILE_NAME = "discloud-lock.txt";
     let databaseFileId: string;
@@ -124,6 +124,8 @@
             console.log("created new database");
         }
 
+        await updateDatabaseContent(database.getDummyDatabaseContent());
+
         console.log("initialized database");
     }
 
@@ -151,6 +153,15 @@
         } else {
             return null;
         }
+    }
+
+    async function webhookExists(): Promise<Folder | null> {
+        if (!await fileExists(DATABASE_FILE_NAME) != null) {
+            return null;
+        }
+
+        database.initDatabaseString(await getDatabaseContent());
+        return database.getBasefile();
     }
 
     export async function updateDatabaseContent(content: string) {
