@@ -22,8 +22,8 @@
     // return await discordFileTransfer.downloadFile(messageIds);
   }
 
-  async function deleteFile(filePath: string) {
-    await database.deleteFile(filePath);
+  async function deleteItem(filePath: string) {
+    await database.deleteItem(filePath);
     // TODO: delete file from website
   }
 </script>
@@ -44,6 +44,6 @@
       <DropdownMenu.Label>Actions</DropdownMenu.Label>
     <DropdownMenu.Separator />
     <DropdownMenu.Item on:click={() => downloadFile(path)}>Download</DropdownMenu.Item>
-    <DropdownMenu.Item on:click={() => deleteFile(path)}>Delete</DropdownMenu.Item>
+    <DropdownMenu.Item on:click={() => deleteItem(path)}>Delete</DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>

@@ -1,7 +1,5 @@
 import * as googleDriveTransfer from "$lib/googleDriveTransfer";
 
-export const defaultDatabaseString = "!base~0";
-
 export let fileString = ""
 let lines : string[] = []
 
@@ -19,35 +17,36 @@ export type Folder = {
     child: (Folder | _File)[] | null
 }
 
-export function setFileString(newFileString: string) {
-    fileString = newFileString;
-}
-
+//diese Funktion nimmt sich den Inhalt der Datenbank und fügt die einzelnen Zeilen in einen String array
 export function init(databaseContent: string) {
     fileString = databaseContent;
     lines = databaseContent.split("\n");
 }
 
+//bei dieser Funktion wird ein 'baseFolder' erstellt. Diesen gibt es in jeder Datenbank, da er der Überordner ist in dem alles andere drin ist.
+//Von diesem werden dann die Unterordner gesucht, und die Unterordner von denen usw. so das man aus diesem baseFolder die Struktur der Datenbank entnehmen kann um das dann auf der Webseite anzuzeigen.
+//die wird jedes Mal gerufen, wenn eine Änderung in der Datenbank vorgenommen wurde und die Anzeige auf der Webseite aktualisiert werden muss.
 export async function getBasefile () {
     let baseFolder : Folder = {name : 'base', path : 'base', parent : null, child : null}
     await getSubFolder(baseFolder)
     return(baseFolder)
 }
 
+//bei dieser Funktion werden die Subfolder oder 'children' von dem eingegebenen ordner gesucht und diesem hinzugefügt.
+//und da sie rekursiv funktioniert werden von diesen dann auch die children gesucht usw.
 export async function getSubFolder(ogFolder : Folder) {
-    //let folder : Folder = {name : ogFolder.name, path : ogFolder.path, parent : ogFolder.parent, child : []}
     ogFolder.child = []
-    let pathArray: string[] = ogFolder.path.split('/')
+    let pathArray: string[] = ogFolder.path.split('/')                                                            //Pfade werden in dem Format: folder/subfoler/subfoler/file angegeben. Hier wird dieser dann in die einzelnen Ordner geteilt
     let line = 0;
     let max = lines.length;
     let path = 0;
     while (line < max) {
         let folderSize = +lines[line].substring(lines[line].lastIndexOf('~') + 1)
-        if (lines[line].substring(1, lines[line].lastIndexOf('~')) === pathArray[path]) {
+        if (lines[line].substring(1, lines[line].lastIndexOf('~')) === pathArray[path]) {                         //Die Datenbank wird von oben durchgegangen und geprüft, ob der Ordner teil des Dateipfades ist. Ist dies nicht der Pfeil, wird der Inhalt des Ordners übersprungen, was das ganze effektiver macht.
             max = line + folderSize
             if (pathArray.length - 1 === path) {
                 for (let i = line + 1; i <= max; i++) {
-                    if (lines[i].substring(0, 1) === '!') {
+                    if (lines[i].substring(0, 1) === '!') {                                                        //wird geprüft ob es sich um einen Folder handelt
                         let subFolderName : string = lines[i].substring(1, lines[i].lastIndexOf('~'))
                         let subFolder : Folder = {                                                                 //hier erstelle ich ein neues folder objekt, für alle 'children' die der original folder hat
                             name: subFolderName,
@@ -59,7 +58,7 @@ export async function getSubFolder(ogFolder : Folder) {
                         await getSubFolder(subFolder)
                         i += +lines[i].substring(lines[i].lastIndexOf('~') + 1)
 
-                    } else if (lines[i].substring(0, 1) === '+') {
+                    } else if (lines[i].substring(0, 1) === '+') {                                                  //wird geprüft ob es sich um eine File handelt
                         let fileName : string = lines[i].substring(1, lines[i].lastIndexOf('~'))
                         let file : _File = {
                             name : fileName,
@@ -81,6 +80,7 @@ export async function getSubFolder(ogFolder : Folder) {
     }
 }
 
+//diese funktion dient dazu die einzelnen messageIDs von einer Datei aus der Datenbank zu extrahieren
 export async function getSubfiles(filepath: string) {
     let pathArray: string[] = filepath.split('/')
     let line = 0;
@@ -106,6 +106,7 @@ export async function getSubfiles(filepath: string) {
     }
 }
 
+//bei dieser Funktion wird eine Line aus der Datenbank gelöscht und der Rest rückt auf
 async function removeLine(n : number) {
     let max = lines.length
     let line = (n - 1)
@@ -117,7 +118,8 @@ async function removeLine(n : number) {
     await googleDriveTransfer.updateDatabaseContent(fileString);
 }
 
-export async function deleteFile(filepath : string) {
+//diese funktion sucht ein Item und löscht dieses aus der Datenbank und lässt alles andere aufrücken
+export async function deleteItem(filepath : string) {
     let pathArray: string[] = filepath.split('/')
     let line = 0;
     let max = lines.length;
@@ -145,6 +147,7 @@ export async function deleteFile(filepath : string) {
     }
 }
 
+//diese Funktion folgt einem gegebenen path und reduziert die größe aller folder auf dem Weg um den gegebenen amount -- Nötig für deletItem
 async function shrinkFolderSize(filepath : string, amount : number) {
     let pathArray: string[] = filepath.split('/')
     let line = 0;
@@ -172,6 +175,7 @@ async function shrinkFolderSize(filepath : string, amount : number) {
     }
 }
 
+//fügt eine Datei samt messageIDs zur Datenbank hinzu und addiert die Menge der hinzugefügten Dateien, zu allen Foldersizes der Folder, in denen die Datei gespeichert ist.
 export async function addFile(name : string, filepath : string, messageIDs : string[]) {
     let pathArray: String[] = filepath.split('/')
     let amount = messageIDs.length + 1
@@ -204,6 +208,7 @@ export async function addFile(name : string, filepath : string, messageIDs : str
     }
 }
 
+//funktioniert gleich wie die addFile funktion nur ohne messageIDs
 export async function addFolder(name : string, filepath : string) {
     let pathArray: string[] = filepath.split('/')
     let line = 0;
