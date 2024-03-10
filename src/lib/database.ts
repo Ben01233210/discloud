@@ -1,6 +1,6 @@
 import * as googleDriveTransfer from "$lib/googleDriveTransfer";
 
-let fileString = ""
+export let fileString = ""
 let lines : string[] = []
 
 export type _File = {

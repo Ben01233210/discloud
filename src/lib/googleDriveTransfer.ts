@@ -4,6 +4,7 @@ import * as Card from "$lib/components/ui/card";
 
 const DATABASE_FILE_NAME = "discloud-lock.txt";
 let databaseFileId: string;
+let webhook: string;
 
 /**
  *  Sign out the user upon button click.
@@ -21,6 +22,7 @@ export async function initDatabase() {
 
     if (fileId) {
         databaseFileId = fileId;
+        webhook = await getWebhookUrl();
     } else {
         databaseFileId = await createDatabaseFile();
     }
@@ -31,11 +33,7 @@ export async function initDatabase() {
 }
 
 async function test() {
-    const testMessageId = "https://cdn.discordapp.com/attachments/1202216768748388402/1215760860728004759/0Test?ex=65fdec88&is=65eb7788&hm=ca00be2f0f8e4913542eecc0e1cd78fbc7391c22d848406300d5efec0bf238ce&";
 
-    await database.addFolder("folder", "base");
-    await database.addFolder("subfolder", "base/folder");
-    await database.addFile("test_file", "base/folder/subfolder", [testMessageId]);
 }
 
 export async function createDatabaseFile(): Promise<string> {
@@ -45,6 +43,10 @@ export async function createDatabaseFile(): Promise<string> {
             "mimeType": "text/plain"
         }
     });
+
+    const webhookLine = "webhookUrl: null";
+
+    await updateDatabaseContent(webhookLine);
 
     return response.result.id ?? "";
 }
@@ -64,15 +66,9 @@ export async function fileExists(fileName: string): Promise<string | undefined> 
     }
 }
 
-export async function getWebhook(): Promise<string | null> {
-    if (await fileExists(DATABASE_FILE_NAME) === undefined) {
-        return null;
-    }
-
-    return "Error: not implemented";
-}
-
 export async function updateDatabaseContent(content: string) {
+    content = "webhookUrl: " + webhook + "\n" + content;
+
     try {
         await gapi.client.request({
             path: `/upload/drive/v3/files/${databaseFileId}`,
@@ -87,6 +83,27 @@ export async function updateDatabaseContent(content: string) {
     }
 }
 
+export async function addWebhook(webhookUrl: string) {
+    webhook = webhookUrl;
+    await updateDatabaseContent(database.fileString);
+}
+
+export async function getWebhookUrl() {
+    try {
+        const response = await gapi.client.drive.files.get({
+            fileId: databaseFileId,
+            alt: "media"
+        });
+        let webhookLine = response.body.split("\n")[0];
+        webhookLine = webhookLine.substring(webhookLine.lastIndexOf(":") + 2)
+
+        return webhookLine;
+    } catch (error) {
+        console.error(error);
+        return "";
+    }
+}
+
 export async function getDatabaseContent() {
     try {
         const response = await gapi.client.drive.files.get({
@@ -94,7 +111,7 @@ export async function getDatabaseContent() {
             alt: "media"
         });
 
-        return response.body;
+        return response.body.split("\n").slice(1).join("\n");
     } catch (error) {
         console.error(error);
         return "";
