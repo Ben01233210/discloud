@@ -1,6 +1,7 @@
 import * as database from "$lib/database";
 
 import * as Card from "$lib/components/ui/card";
+import { redirect } from "@sveltejs/kit";
 
 const DATABASE_FILE_NAME = "discloud-lock.txt";
 let databaseFileId: string;

@@ -7,6 +7,8 @@
 
 
     import {onMount} from 'svelte';
+    import { redirect } from "@sveltejs/kit";
+    import { goto } from "$app/navigation";
 
     let databaseFileId: string;
 
@@ -86,7 +88,7 @@
     /**
      *  Sign in the user upon button click.
      */
-    function handleAuthClick() {
+    async function handleAuthClick() {
         tokenClient.callback = async (resp) => {
             if (resp.error !== undefined) {
                 throw (resp);
@@ -96,6 +98,7 @@
             document.cookie = `auth_token=${authToken};max-age=3600;secure;samesite=strict`; // This sets a cookie that lasts for 1 hour
 
             await googleDriveTransfer.initDatabase();
+                    
         };
 
         if (gapi.client.getToken() === null) {
@@ -106,6 +109,11 @@
             // Skip display of account chooser and consent dialog for an existing session.
             tokenClient.requestAccessToken({prompt: ''});
         }
+
+            if(await googleDriveTransfer.getWebhookUrl() == "") {
+             goto("/signup");
+                        
+            }
     }
 
     function getCookie(name: string) {
@@ -133,6 +141,9 @@
             videos, and more. Experience the convenience and flexibility of
             cloud storage with Discloud.
         </p>
-        <Button on:click={handleAuthClick} disabled={!authorizeButtonVisible}>Login</Button>
+        <Button on:click={handleAuthClick} disabled={!authorizeButtonVisible}
+            >Login</Button
+        >
     </Card.Root>
 </div>
+
