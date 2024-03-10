@@ -5,38 +5,47 @@ import * as Card from "$lib/components/ui/card";
 const DATABASE_FILE_NAME = "discloud-lock.txt";
 let databaseFileId: string;
 let webhook: string;
+let databaseInited = false;
 
-/**
- *  Sign out the user upon button click.
- */
-export function handleSignoutClick() {
-    const token = gapi.client.getToken();
-    if (token !== null) {
-        google.accounts.oauth2.revoke(token.access_token);
-        gapi.client.setToken(null);
-    }
-}
+// /**
+//  *  Sign out the user upon button click.
+//  */
+// export function handleSignoutClick() {
+//     const token = gapi.client.getToken();
+//     if (token !== null) {
+//         google.accounts.oauth2.revoke(token.access_token);
+//         gapi.client.setToken(null);
+//     }
+// }
 
 export async function initDatabase() {
-    const fileId = await fileExists(DATABASE_FILE_NAME);
+    if (!databaseInited) {
+        const fileId = await fileExists(DATABASE_FILE_NAME);
 
-    if (fileId) {
-        databaseFileId = fileId;
-        webhook = await getWebhookUrl();
-    } else {
-        databaseFileId = await createDatabaseFile();
+        if (fileId) {
+            // console.log("found existing database");
+            databaseFileId = fileId;
+            webhook = await getWebhookUrl();
+        } else {
+            // console.log("create new database file");
+            await createDatabaseFile();
+        }
+
+        database.init(await getDatabaseContent());
+        databaseInited = true;
+
+        // await test();
     }
-
-    database.init(await getDatabaseContent());
-
-    // await test();
 }
 
 async function test() {
-
+    console.log("user logged in");
+    getDatabaseContent().then((result) => {
+        console.log(result);
+    })
 }
 
-export async function createDatabaseFile(): Promise<string> {
+export async function createDatabaseFile() {
     const response = await gapi.client.drive.files.create({
         resource: {
             "name": DATABASE_FILE_NAME,
@@ -44,11 +53,12 @@ export async function createDatabaseFile(): Promise<string> {
         }
     });
 
-    const webhookLine = "webhookUrl: null";
+    databaseFileId = response.result.id ?? "";
 
-    await updateDatabaseContent(webhookLine);
+    const content = database.defaultDatabaseString;
+    database.setFileString(content);
 
-    return response.result.id ?? "";
+    await updateDatabaseContent(content);
 }
 
 export async function fileExists(fileName: string): Promise<string | undefined> {

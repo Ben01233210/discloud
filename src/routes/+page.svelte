@@ -7,13 +7,10 @@
 
 
     import {onMount} from 'svelte';
-    import type {_File, Folder} from "$lib/database";
 
-    const DATABASE_FILE_NAME = "discloud-lock.txt";
     let databaseFileId: string;
 
     let authorizeButtonVisible = false;
-    let signoutButtonVisible = false;
 
     const CLIENT_ID = "410214321825-o40h4kkrj2j6cnuguu88qn4i3f7ve5fg.apps.googleusercontent.com";
     const API_KEY = "AIzaSyAieD4rFf6p0GTutU8VGB1uT4PBX7RHWL4";
@@ -55,7 +52,12 @@
             discoveryDocs: [DISCOVERY_DOC],
         });
         gapiInited = true;
-        maybeEnableButtons();
+        maybeEnableButtons().then();
+
+        const authToken = getCookie('auth_token');
+        if (authToken) {
+            gapi.client.setToken({access_token: authToken});
+        }
     }
 
     /**
@@ -74,9 +76,10 @@
     /**
      * Enables user interaction after all libraries are loaded.
      */
-    function maybeEnableButtons() {
+    async function maybeEnableButtons() {
         if (gapiInited && gisInited) {
             authorizeButtonVisible = true;
+            await googleDriveTransfer.initDatabase();
         }
     }
 
@@ -88,7 +91,10 @@
             if (resp.error !== undefined) {
                 throw (resp);
             }
-            signoutButtonVisible = true;
+
+            const authToken = resp.access_token; // Assuming the token is in resp.access_token
+            document.cookie = `auth_token=${authToken};max-age=3600;secure;samesite=strict`; // This sets a cookie that lasts for 1 hour
+
             await googleDriveTransfer.initDatabase();
         };
 
@@ -102,61 +108,18 @@
         }
     }
 
-    /**
-     *  Sign out the user upon button click.
-     */
-    function handleSignoutClick() {
-        const token = gapi.client.getToken();
-        if (token !== null) {
-            google.accounts.oauth2.revoke(token.access_token);
-            gapi.client.setToken(null);
-            authorizeButtonVisible = false;
+    function getCookie(name: string) {
+        let cookieArray = document.cookie.split(';'); // Split the cookie string into individual cookies
+        for(let i = 0; i < cookieArray.length; i++) {
+            let cookie = cookieArray[i];
+            while (cookie.charAt(0) === ' ') {
+                cookie = cookie.substring(1); // Trim leading whitespace
+            }
+            if (cookie.indexOf(name + '=') === 0) {
+                return cookie.substring(name.length + 1, cookie.length); // Extract and return the cookie value
+            }
         }
-    }
-
-    async function fileExists(fileName: string) {
-        const response = await gapi.client.drive.files.list({
-            "q": `name='${fileName}' and trashed=false`,
-            "spaces": "drive",
-            "fields": "files(id)"
-        });
-        const files = response.result.files;
-
-        if (files && files.length > 0) {
-            return files[0].id;
-        } else {
-            return null;
-        }
-    }
-
-    export async function updateDatabaseContent(content: string) {
-        try {
-            return await gapi.client.request({
-                path: `/upload/drive/v3/files/${databaseFileId}`,
-                method: "PATCH",
-                params: {
-                    uploadType: "media"
-                },
-                body: content
-            });
-        } catch (error) {
-            console.error(error);
-            return null;
-        }
-    }
-
-    export async function getDatabaseContent() {
-        try {
-            const response = await gapi.client.drive.files.get({
-                fileId: databaseFileId,
-                alt: "media"
-            });
-
-            return response.body;
-        } catch (error) {
-            console.error(error);
-            return null;
-        }
+        return ""; // Return empty string if the cookie is not found
     }
 </script>
 
