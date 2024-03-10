@@ -1,12 +1,13 @@
 <script lang="ts">
     import { Button } from "$lib/components/ui/button";
-    import * as database from "$lib/Database";
+    import * as database from "$lib/database";
+    import * as googleDriveTransfer from "$lib/googleDriveTransfer";
 
     import * as Card from "$lib/components/ui/card";
-    
+
 
     import {onMount} from 'svelte';
-    import type {_File, Folder} from "$lib/Database";
+    import type {_File, Folder} from "$lib/database";
 
     const DATABASE_FILE_NAME = "discloud-lock.txt";
     let databaseFileId: string;
@@ -19,7 +20,7 @@
     const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
     const SCOPES = 'https://www.googleapis.com/auth/drive';
 
-    let tokenClient;
+    let tokenClient: GoogleApiOAuth2TokenObject;
     let gapiInited = false;
     let gisInited = false;
 
@@ -88,7 +89,7 @@
                 throw (resp);
             }
             signoutButtonVisible = true;
-            await initDatabase();
+            await googleDriveTransfer.initDatabase();
         };
 
         if (gapi.client.getToken() === null) {
@@ -113,34 +114,7 @@
         }
     }
 
-    async function initDatabase() {
-        const fileId = await fileExists(DATABASE_FILE_NAME);
-
-        if (fileId) {
-            databaseFileId = fileId;
-            console.log("found database");
-        } else {
-            databaseFileId = await createDatabaseFile();
-            console.log("created new database");
-        }
-
-        await updateDatabaseContent(database.getDummyDatabaseContent());
-
-        console.log("initialized database");
-    }
-
-    async function createDatabaseFile(): Promise<string> {
-        const response = await gapi.client.drive.files.create({
-            resource: {
-                "name": DATABASE_FILE_NAME,
-                "mimeType": "text/plain"
-            }
-        });
-
-        return response.result.id;
-    }
-
-    async function fileExists(fileName: string): Promise<string | null> {
+    async function fileExists(fileName: string) {
         const response = await gapi.client.drive.files.list({
             "q": `name='${fileName}' and trashed=false`,
             "spaces": "drive",
@@ -153,15 +127,6 @@
         } else {
             return null;
         }
-    }
-
-    async function webhookExists(): Promise<Folder | null> {
-        if (await fileExists(DATABASE_FILE_NAME) != null) {
-            return null;
-        }
-
-        database.initDatabaseString(await getDatabaseContent());
-        return database.getBasefile();
     }
 
     export async function updateDatabaseContent(content: string) {
@@ -196,7 +161,7 @@
 </script>
 
 <div class="w-full h-full text-foreground">
-   <Card.Root class="flex flex-col gap-2 m-4 p-4">
+    <Card.Root class="flex flex-col gap-2 m-4 p-4">
         <Card.Title class="text-center">Discloud</Card.Title>
         <p>
             Discloud is a free cloud storage platform that allows you to

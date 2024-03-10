@@ -12,7 +12,7 @@
     } from "svelte-headless-table/plugins";
 
     import { writable } from "svelte/store";
-    import type { _File, Folder } from "$lib/Database";
+    import type { _File, Folder } from "$lib/database";
     import * as Table from "$lib/components/ui/table";
 
     import { dummyData } from "./dummy-data";
