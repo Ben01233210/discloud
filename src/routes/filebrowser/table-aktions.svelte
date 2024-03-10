@@ -8,20 +8,37 @@
 
   export let path: string;
 
-  async function downloadFile(filePath: string) {
-    // following code is throwing an error
-    console.log(googleDriveTransfer.getDatabaseContent());
+  async function downloadFile(path: string) {
+      const urls = ["https://cdn.discordapp.com/attachments/1202216768748388402/1215760860728004759/0Test?ex=65fdec88&is=65eb7788&hm=ca00be2f0f8e4913542eecc0e1cd78fbc7391c22d848406300d5efec0bf238ce&"] 
+    try {
+        const response = await fetch("/api/downloadfile", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ urls })
+        });
 
-    const testMessageId = "https://cdn.discordapp.com/attachments/1202216768748388402/1215760860728004759/0Test?ex=65fdec88&is=65eb7788&hm=ca00be2f0f8e4913542eecc0e1cd78fbc7391c22d848406300d5efec0bf238ce&";
-    const file = await discordFileTransfer.downloadFile([testMessageId]);
-    console.log("file size: " + file.size);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-    return file;
+        const blob = await response.blob();
+        console.log("File size:", blob.size);
 
-    // const messageIds = await database.getSubfiles(filePath) ?? [];
-    // return await discordFileTransfer.downloadFile(messageIds);
-  }
-
+        // Trigger download
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = downloadUrl;
+        a.download = "downloaded-file";
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(downloadUrl);
+        a.remove();
+    } catch (error) {
+        console.error("Failed to download the file:", error);
+    }
+}
   async function deleteFile(filePath: string) {
     await database.deleteFile(filePath);
     // TODO: delete file from website

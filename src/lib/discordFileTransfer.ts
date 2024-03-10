@@ -43,13 +43,11 @@ async function uploadFiles(webhookURL: string, files: Blob[], fileName: string):
 
     return fileURLs;
 }
-
 async function downloadSingleFile(fileURL: string): Promise<Blob> {
-    const response = await axios({
-        method: "GET",
-        url: fileURL,
-        responseType: "blob"
-    });
-
-    return response.data;
+    const response = await fetch(fileURL);
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    return await response.blob();
 }
+
