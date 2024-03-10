@@ -1,5 +1,7 @@
 import * as googleDriveTransfer from "$lib/googleDriveTransfer";
 
+export const defaultDatabaseString = "!base~0";
+
 export let fileString = ""
 let lines : string[] = []
 
@@ -15,6 +17,10 @@ export type Folder = {
     path : string
     parent : Folder | null
     child: (Folder | _File)[] | null
+}
+
+export function setFileString(newFileString: string) {
+    fileString = newFileString;
 }
 
 export function init(databaseContent: string) {
