@@ -12,7 +12,7 @@
     } from "svelte-headless-table/plugins";
 
     import { writable } from "svelte/store";
-    import { getBasefile, type _File, type Folder } from "$lib/database";
+    import { getBasefile, type _File, type Folder, addFolder } from "$lib/database";
     import * as Table from "$lib/components/ui/table";
 
     import TableAktions from "./table-aktions.svelte";
@@ -21,9 +21,21 @@
     import ExpandInicator from "./expand-inicator.svelte";
     import { getDatabaseContent } from "$lib/googleDriveTransfer";
     import AddButton from "./add-button.svelte";
-    import data from "./file-store"
+    import dataStore from "./file-store";
+    import { onMount } from "svelte";
 
-    const table = createTable(data, {
+    onMount(async () => {
+
+        setTimeout(function() { getBasefile().then((args) => {dataStore.set(args.child ? args.child : [])} )}, 5000);
+
+        
+
+            
+
+    });
+
+
+    const table = createTable(dataStore, {
         expand: addExpandedRows(),
         sub: addSubRows({
             children: (row) => {
@@ -88,7 +100,7 @@
             type="text"
             bind:value={$filterValue}
         />
-    <AddButton />
+        <AddButton />
     </div>
     <Table.Root {...$tableAttrs}>
         <Table.Header>

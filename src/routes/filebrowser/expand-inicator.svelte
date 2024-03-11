@@ -18,7 +18,7 @@
 		{/if}
 	</span>
 {:else}
-    <span style:--depth={depth}>File</span>
+    <span style:--depth={depth}>•</span>
 {/if}
 
 <style>

@@ -37,6 +37,7 @@ export async function initDatabase() {
 
         // await test();
     }
+    console.log("Database inited");
 }
 
 async function test() {

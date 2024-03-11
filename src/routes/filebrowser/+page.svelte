@@ -4,6 +4,7 @@
     import * as googleDriveTransfer from "$lib/googleDriveTransfer";
 
     import {getBasefile } from "$lib/database";
+    import dataStore from "./file-store";
 
     console.log(getBasefile());
     
@@ -74,6 +75,10 @@
     async function maybeInitDatabase() {
         if (gapiInited && gisInited) {
             await googleDriveTransfer.initDatabase();
+            getBasefile().then((args) => {dataStore.set(args.child ? args.child : []); })
+            console.log("Database maybe inited");
+                    
+
         }
     }
 
@@ -83,4 +88,5 @@
         if (parts.length === 2) return parts.pop().split(';').shift();
     }
 </script>
+
 <DataTable />
