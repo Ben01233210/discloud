@@ -1,6 +1,7 @@
 
 !!!Falls Bugs auftreten: Seite neu laden!!!
-!!Wenn sie Dateien in Ordner hochladen: Seite neu laden. Dann werden sie angezeigt!!
+!!Wenn sie Dateien in Ordner hochladen: Seite neu laden. Dann werden sie angezeigt (meistens)!!
+!Dateien über den blauen button hochladen funktioniert gut, files in folder zu adden, klappt nur manchmal!
 
 Hallo Herr Lundschien,
 
