@@ -65,7 +65,7 @@
             callback: '', // defined later
         });
         gisInited = true;
-        maybeInitDatabase();
+        maybeInitDatabase().then();
     }
 
     /**
@@ -74,6 +74,7 @@
     async function maybeInitDatabase() {
         if (gapiInited && gisInited) {
             await googleDriveTransfer.initDatabase();
+            console.log("initialzied database");
         }
     }
 

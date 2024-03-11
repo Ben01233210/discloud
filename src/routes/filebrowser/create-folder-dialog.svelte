@@ -15,7 +15,7 @@
     let folderName : string 
     function onSubmit() {
         open = false;
-        addFolder(folderName,"/")
+        addFolder(folderName,"base")
     }
 </script>
 

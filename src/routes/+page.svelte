@@ -110,7 +110,7 @@
             tokenClient.requestAccessToken({prompt: ''});
         }
 
-            if(await googleDriveTransfer.getWebhookUrl() == "") {
+            if(await googleDriveTransfer.getWebhookUrl() == "undefined") {
              goto("/signup");
                         
             }
