@@ -34,9 +34,9 @@ export async function getBasefile () {
 
 //bei dieser Funktion werden die Subfolder oder 'children' von dem eingegebenen ordner gesucht und diesem hinzugefügt.
 //und da sie rekursiv funktioniert werden von diesen dann auch die children gesucht usw.
-export async function getSubFolder(ogFolder : Folder) {
-    ogFolder.child = []
-    let pathArray: string[] = ogFolder.path.split('/')                                                            //Pfade werden in dem Format: folder/subfoler/subfoler/file angegeben. Hier wird dieser dann in die einzelnen Ordner geteilt
+export async function getSubFolder(parentFolder : Folder) {
+    parentFolder.child = []
+    let pathArray: string[] = parentFolder.path.split('/')                                                            //Pfade werden in dem Format: folder/subfoler/subfoler/file angegeben. Hier wird dieser dann in die einzelnen Ordner geteilt
     let line = 0;
     let max = lines.length;
     let path = 0;
@@ -50,11 +50,11 @@ export async function getSubFolder(ogFolder : Folder) {
                         let subFolderName : string = lines[i].substring(1, lines[i].lastIndexOf('~'))
                         let subFolder : Folder = {                                                                 //hier erstelle ich ein neues folder objekt, für alle 'children' die der original folder hat
                             name: subFolderName,
-                            path : ogFolder.path + '/' + subFolderName,
-                            parent : ogFolder,
+                            path : parentFolder.path + '/' + subFolderName,
+                            parent : parentFolder,
                             child : null
                         };
-                        ogFolder.child.push(subFolder)
+                        parentFolder.child.push(subFolder)
                         await getSubFolder(subFolder)
                         i += +lines[i].substring(lines[i].lastIndexOf('~') + 1)
 
@@ -62,14 +62,14 @@ export async function getSubFolder(ogFolder : Folder) {
                         let fileName : string = lines[i].substring(1, lines[i].lastIndexOf('~'))
                         let file : _File = {
                             name : fileName,
-                            path : ogFolder.path + '/' + fileName,
-                            parent : ogFolder
+                            path : parentFolder.path + '/' + fileName,
+                            parent : parentFolder
                         };
-                        ogFolder.child.push(file)
+                        parentFolder.child.push(file)
                         i += +lines[i].substring(lines[i].lastIndexOf('~') + 1)
                     }
                 }
-                return(ogFolder)
+                return(parentFolder)
             } else {
                 path += 1
                 line += 1
