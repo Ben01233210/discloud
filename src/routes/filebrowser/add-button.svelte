@@ -26,23 +26,21 @@
 
     let files: FileList;
     $: if (files) {
-        let webhookUrl = "";
-        getWebhookUrl().then((url) => {
-            webhookUrl = url;
+        getWebhookUrl().then((webhookUrl) => {
+            for (const file of files) {
+                uploadFile(webhookUrl, file, file.name).then((res) => {
+                    console.log(res);
+                });
+
+                const fileInTree: _File = {
+                    name: file.name,
+                    path: "/" + file.name,
+                    parent: null,
+                };
+
+                tableContent.update((current) => current.concat([fileInTree]));
+            }
         });
-        for (const file of files) {
-            uploadFile(webhookUrl, file, file.name).then((res) => {
-                console.log(res);
-            });
-
-            const fileInTree: _File = {
-                name: file.name,
-                path: "/" + file.name,
-                parent: null,
-            };
-
-            tableContent.update((current) => current.concat([fileInTree]));
-        }
     }
 </script>
 

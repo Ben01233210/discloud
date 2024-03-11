@@ -65,7 +65,7 @@
             callback: '', // defined later
         });
         gisInited = true;
-        maybeInitDatabase();
+        maybeInitDatabase().then();
     }
 
     /**

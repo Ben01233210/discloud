@@ -22,6 +22,8 @@ async function uploadSingleFile(webhookURL: string, fileBlob: Blob, fileName: st
     const form = new FormData();
 
     form.append("file", fileBlob, fileName);
+    console.log("webhook url: " + webhookURL);
+    console.log("file name: " + fileName);
 
     try {
         const response = await axios.post(webhookURL, form);

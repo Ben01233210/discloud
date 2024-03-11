@@ -1,4 +1,7 @@
 import * as googleDriveTransfer from "$lib/googleDriveTransfer";
+import {updateDatabaseContent} from "$lib/googleDriveTransfer";
+
+export const defaultDatabaseString = "!base~0";
 
 export let fileString = ""
 let lines : string[] = []
@@ -21,6 +24,10 @@ export type Folder = {
 export function init(databaseContent: string) {
     fileString = databaseContent;
     lines = databaseContent.split("\n");
+}
+
+export function setFileString(newFileString: string) {
+    fileString = newFileString;
 }
 
 //bei dieser Funktion wird ein 'baseFolder' erstellt. Diesen gibt es in jeder Datenbank, da er der Überordner ist in dem alles andere drin ist.
@@ -182,7 +189,7 @@ export async function addFile(name : string, filepath : string, messageIDs : str
     let line = 0;
     let max = lines.length;
     let path = 0;
-    while (line <= max) {
+    while (line < max) {
         let folderSize = +lines[line].substring(lines[line].lastIndexOf('~') + 1)
         if (lines[line].substring(1, lines[line].lastIndexOf('~')) === pathArray[path]) {
             max = line + folderSize
@@ -209,12 +216,12 @@ export async function addFile(name : string, filepath : string, messageIDs : str
 }
 
 //funktioniert gleich wie die addFile funktion nur ohne messageIDs
-export async function addFolder(name : string, filepath : string) {
-    let pathArray: string[] = filepath.split('/')
+export function addFolder(name : string, filepath : string) : void {
+    let pathArray: String[] = filepath.split('/')
     let line = 0;
     let max = lines.length;
     let path = 0;
-    while (line <= max) {
+    while (line < max) {
         let folderSize = +lines[line].substring(lines[line].lastIndexOf('~') + 1)
         if (lines[line].substring(1, lines[line].lastIndexOf('~')) === pathArray[path]) {
             max = line + folderSize
@@ -225,7 +232,7 @@ export async function addFolder(name : string, filepath : string) {
                 line += 1
                 lines.splice(line, 0, '!' + name + '~' + 0)
                 fileString = lines.join('\n')
-                await googleDriveTransfer.updateDatabaseContent(fileString);
+                googleDriveTransfer.updateDatabaseContent(fileString).then();
                 return
             } else {
                 path += 1

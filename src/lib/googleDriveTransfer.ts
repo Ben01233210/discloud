@@ -40,7 +40,6 @@ export async function initDatabase() {
 }
 
 async function test() {
-    console.log("user logged in");
     getDatabaseContent().then((result) => {
         console.log(result);
     })
@@ -105,8 +104,9 @@ export async function getWebhookUrl() {
             fileId: databaseFileId,
             alt: "media"
         });
+
         let webhookLine = response.body.split("\n")[0];
-        webhookLine = webhookLine.substring(webhookLine.lastIndexOf(":") + 2)
+        webhookLine = webhookLine.substring(12);
 
         return webhookLine;
     } catch (error) {

@@ -5,17 +5,21 @@
     import { Input } from "$lib/components/ui/input";
     import { Label } from "$lib/components/ui/label";
     import { addFolder, type Folder } from "$lib/database";
-
+    import { getBasefile } from "$lib/database";
+    import  data from "./file-store";
     export function openDialog() {
         open = true;
-    };
+    }
     export let rootFolder: Folder;
     let open = false;
 
-    let folderName : string 
+    let folderName: string;
     function onSubmit() {
         open = false;
-        addFolder(folderName,"/")
+        addFolder(folderName, "base");
+
+        
+        getBasefile().then((args) => {data.set(args.child ? args.child : [])} )
     }
 </script>
 
@@ -24,14 +28,11 @@
     <Dialog.Content>
         <Dialog.Header>
             <Dialog.Title>Create Folder</Dialog.Title>
-            <Dialog.Description>
-                Create a new folder in 
-            </Dialog.Description>
         </Dialog.Header>
         <div class="grid gap-4 py-4">
             <div class="grid grid-cols-4 items-center gap-4">
                 <Label for="name" class="text-right">Name</Label>
-                <Input id="name" bind:value={folderName}  class="col-span-3" />
+                <Input id="name" bind:value={folderName} class="col-span-3" />
             </div>
             <Dialog.Footer>
                 <Button type="submit" on:click={onSubmit}>Create Folder</Button>
