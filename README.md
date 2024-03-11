@@ -1,7 +1,6 @@
 Hallo Herr Lundschien,
 
-Unten sind die "about" und "tutorial" Texte von der Webseite, wo die basic steps erklärt sind, damit sie die Webseite nutzen können.
-Doch vorher: sie brauchen ein google konto damit mit welchem sie sich anmelden, dieses müssen wir momentan aber noch händisch freischalten, dafür müssten sie uns eine email addressse von ihnen schicken, die mit einem aktiven google konto verküpft ist. Wir schalten sie dann so schnell wie möglich frei, damit sie die Webseite nutzen können.
+Sie brauchen ein google konto damit mit welchem sie sich anmelden, dieses müssen wir momentan aber noch händisch freischalten, dafür müssten sie uns eine email addressse von ihnen schicken, die mit einem aktiven google konto verküpft ist. Wir schalten sie dann so schnell wie möglich frei, damit sie die Webseite nutzen können.
 
 Im "about" ist die Funktionsweise unser Webseite grob erklärt.
 Für sie aber hier eine ausführliche Version + eine grobe Übersicht, wie unser code strukturiert ist und was was macht
