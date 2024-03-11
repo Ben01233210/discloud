@@ -11,9 +11,12 @@
         type Folder,
         addFolder,
     } from "$lib/database";
+
     import { uploadFile } from "$lib/discordFileTransfer";
     import { getWebhookUrl } from "$lib/googleDriveTransfer";
     import CreateFolderDialog from "./create-folder-dialog.svelte";
+    import * as database from "$lib/database";
+
     import tableContent from "./file-store";
     let rootFolder: Folder
     let dialog : CreateFolderDialog
@@ -28,8 +31,8 @@
     $: if (files) {
         getWebhookUrl().then((webhookUrl) => {
             for (const file of files) {
-                uploadFile(webhookUrl, file, file.name).then((res) => {
-                    console.log(res);
+                uploadFile(webhookUrl, file, file.name).then((messageIds) => {
+                    database.addFile(file.name, "base", messageIds);
                 });
 
                 const fileInTree: _File = {
