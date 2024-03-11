@@ -114,6 +114,9 @@
              goto("/signup");
                         
             }
+        else {
+            goto("/filebrowser")
+        }
     }
 
     function getCookie(name: string) {

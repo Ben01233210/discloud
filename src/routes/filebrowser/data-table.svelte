@@ -64,7 +64,7 @@
             header: "",
             accessor: (path) => path,
             cell: ({ value }) => {
-                return createRender(TableAktions, { path: value.path });
+                return createRender(TableAktions, { file_folder: value });
             },
         }),
     ]);

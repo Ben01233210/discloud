@@ -5,11 +5,16 @@
     import * as discordFileTransfer from "$lib/discordFileTransfer";
     import * as database from "$lib/database";
     import * as googleDriveTransfer from "$lib/googleDriveTransfer";
+    import * as Dialog from "$lib/components/ui/dialog";
+    import { Label } from "$lib/components/ui/label";
+    import { Input } from "$lib/components/ui/input";
 
-    export let path: string;
+    export let file_folder: database._File | database.Folder;
+
+    function createFolder() {}
 
     async function downloadFile(path: string) {
-        const urls = await database.getSubfiles(path)
+        const urls = await database.getSubfiles(path);
         try {
             const response = await fetch("/api/downloadfile", {
                 method: "POST",
@@ -60,11 +65,17 @@
     <DropdownMenu.Content>
         <DropdownMenu.Label>Actions</DropdownMenu.Label>
         <DropdownMenu.Separator />
-        <DropdownMenu.Item on:click={() => downloadFile(path)}
-            >Download</DropdownMenu.Item
-        >
-        <DropdownMenu.Item on:click={() => deleteItem(path)}
-            >Delete</DropdownMenu.Item
-        >
+        {#if "child" in file_folder}
+            <DropdownMenu.Item on:click={() => createFolder()}>
+                Create Folder</DropdownMenu.Item
+            >
+        {:else}
+            <DropdownMenu.Item on:click={() => downloadFile(file_folder.path)}
+                >Download</DropdownMenu.Item
+            >
+            <DropdownMenu.Item on:click={() => deleteItem(file_folder.path)}
+                >Delete</DropdownMenu.Item
+            >
+        {/if}
     </DropdownMenu.Content>
 </DropdownMenu.Root>
