@@ -12,17 +12,17 @@
     } from "svelte-headless-table/plugins";
 
     import { writable } from "svelte/store";
-    import type { _File, Folder } from "$lib/database";
+    import { getBasefile, type _File, type Folder } from "$lib/database";
     import * as Table from "$lib/components/ui/table";
 
-    import { dummyData } from "./dummy-data";
     import TableAktions from "./table-aktions.svelte";
 
     import { Input } from "$lib/components/ui/input";
     import ExpandInicator from "./expand-inicator.svelte";
+    import { getDatabaseContent } from "$lib/googleDriveTransfer";
+    import AddButton from "./add-button.svelte";
+    import data from "./file-store"
 
-
-    let data = writable([dummyData] as [Folder | _File]);
     const table = createTable(data, {
         expand: addExpandedRows(),
         sub: addSubRows({
@@ -43,22 +43,19 @@
 
     const columns = table.createColumns([
         table.display({
-			id: 'expanded',
-			header: '',
-			cell: ({ row }, { pluginStates }) => {
-				const {
-					isExpanded,
-					canExpand,
-					isAllSubRowsExpanded,
-				} = pluginStates.expand.getRowState(row);
-				return createRender(ExpandInicator, {
-					depth: row.depth,
-					isExpanded,
-					canExpand,
-					isAllSubRowsExpanded,
-				});
-			},
-		}),
+            id: "expanded",
+            header: "",
+            cell: ({ row }, { pluginStates }) => {
+                const { isExpanded, canExpand, isAllSubRowsExpanded } =
+                    pluginStates.expand.getRowState(row);
+                return createRender(ExpandInicator, {
+                    depth: row.depth,
+                    isExpanded,
+                    canExpand,
+                    isAllSubRowsExpanded,
+                });
+            },
+        }),
         table.column({
             accessor: "name",
             header: "Name",
@@ -71,21 +68,27 @@
             },
         }),
     ]);
-    const {rows, headerRows, pageRows, tableAttrs, tableBodyAttrs, pluginStates } =
-        table.createViewModel(columns);
+    const {
+        rows,
+        headerRows,
+        pageRows,
+        tableAttrs,
+        tableBodyAttrs,
+        pluginStates,
+    } = table.createViewModel(columns);
     const { filterValue } = pluginStates.filter;
-    const { getRowState} = pluginStates.expand;
-    
+    const { getRowState } = pluginStates.expand;
 </script>
 
-<div class="rounded-md border">
-    <div class="flex items-center py-4">
+<div class="rounded-md border w-full">
+    <div class="flex gap-20 py-4">
         <Input
             class="max-w-sm"
             placeholder="filter files and folders"
             type="text"
             bind:value={$filterValue}
         />
+    <AddButton />
     </div>
     <Table.Root {...$tableAttrs}>
         <Table.Header>
