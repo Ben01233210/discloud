@@ -1,6 +1,10 @@
+
+!!!Falls Bugs auftreten: Seite neu laden!!!
+!!Wenn sie Dateien in Ordner hochladen: Seite neu laden. Dann werden sie angezeigt!!
+
 Hallo Herr Lundschien,
 
-Um unsere zu nutzen, brauchen sie ein google konto mit welchem sie sich anmelden, dieses müssen wir momentan aber noch händisch freischalten. 
+Um unsere Webseite zu nutzen, brauchen sie ein google konto mit welchem sie sich anmelden, dieses müssen wir momentan aber noch händisch freischalten. 
 Dafür müssten sie uns eine email addressse von ihnen schicken, die mit einem aktiven google konto verküpft ist. Wir schalten sie dann so schnell wie möglich frei, damit sie die Webseite nutzen können.
 
 Weiter unten finden sie einen "about" part, dort ist die Funktionsweise unser Webseite grob erklärt.
