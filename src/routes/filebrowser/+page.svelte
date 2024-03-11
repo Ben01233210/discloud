@@ -74,7 +74,6 @@
     async function maybeInitDatabase() {
         if (gapiInited && gisInited) {
             await googleDriveTransfer.initDatabase();
-            console.log("initialzied database");
         }
     }
 
