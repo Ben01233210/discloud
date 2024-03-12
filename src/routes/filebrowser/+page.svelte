@@ -1,4 +1,6 @@
 <script lang="ts">
+// einstiegsdatei fuer den filebrowser
+
     import DataTable from "./data-table.svelte";
     import {onMount} from 'svelte';
     import * as googleDriveTransfer from "$lib/googleDriveTransfer";
