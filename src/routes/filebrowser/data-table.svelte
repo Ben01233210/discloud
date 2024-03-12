@@ -1,4 +1,5 @@
 <script lang="ts">
+// Haupt Inhalt der /filebrowser seite
     import {
         createTable,
         Render,
@@ -24,19 +25,18 @@
     import dataStore from "./file-store";
     import { onMount } from "svelte";
 
-    onMount(async () => {
 
-        setTimeout(function() { getBasefile().then((args) => {dataStore.set(args.child ? args.child : [])} )}, 5000);
 
         
 
             
 
-    });
 
 
+// erstellung der Table
     const table = createTable(dataStore, {
         expand: addExpandedRows(),
+    // das gibt and bei welchen reihen es unterreihen geben darf
         sub: addSubRows({
             children: (row) => {
                 if ("child" in row) {
@@ -53,6 +53,7 @@
         }),
     });
 
+// erstellung der Zeilekoepfe der Table
     const columns = table.createColumns([
         table.display({
             id: "expanded",
@@ -60,6 +61,8 @@
             cell: ({ row }, { pluginStates }) => {
                 const { isExpanded, canExpand, isAllSubRowsExpanded } =
                     pluginStates.expand.getRowState(row);
+            // weg um components in den einzelnen spalten zu rendern
+            // der macht das man folder ausklappen kann
                 return createRender(ExpandInicator, {
                     depth: row.depth,
                     isExpanded,
@@ -91,7 +94,7 @@
     const { filterValue } = pluginStates.filter;
     const { getRowState } = pluginStates.expand;
 </script>
-
+<!-- ui der Tabele-->
 <div class="rounded-md border w-full">
     <div class="flex gap-20 py-4">
         <Input

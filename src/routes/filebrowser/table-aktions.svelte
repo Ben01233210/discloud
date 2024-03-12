@@ -11,7 +11,8 @@
     import CreateFolderDialog from "./create-folder-dialog.svelte";
     import type { _File } from "$lib/database";
     import tableContent from "./file-store";
-
+    
+    // input fuer den Component das er weiss welcher folder sein parent ist
     export let file_folder: database._File | database.Folder = {
         child: [],
         name: "base",
@@ -20,7 +21,7 @@
     } as database.Folder;
     let dialog: CreateFolderDialog;
     let files: FileList;
-
+// diese methode downloaded das file indem sie zuerst eine interne api aufruft die das downlaoded und dann zum frontend schickt wo die datei runtergeladen wird
     async function downloadFile(path: string) {
         const urls = await database.getSubfiles(path);
         try {
@@ -60,6 +61,7 @@
         await database.deleteItem(filePath);
         // TODO: delete file from website
     }
+    // funktion um dem Rootfolder den korrekten wert zuzuordnen
     function getRootFolder(): database.Folder {
         console.log(file_folder);
         if ("child" in file_folder) {
@@ -74,6 +76,8 @@
         }
     }
 
+    // wieder wenn sich die Input files veraendern bzw ein file hochgeladen werden soll runnt der code
+    // dieser laed das file in discord und unsere interne datenbank hoch
     $: if (files) {
         googleDriveTransfer.getWebhookUrl().then((webhookUrl) => {
             for (const file of files) {
@@ -96,8 +100,11 @@
     }
 </script>
 
+<!-- hier auch wieder der File Input-->
 <input bind:files hidden id="files" multiple type="file" />
+<!-- Hier wird das Dropdownmenu designed-->
 <DropdownMenu.Root>
+    <!-- das ist der Trigger um das Dropdownmenu zu aktivieren -->
     <DropdownMenu.Trigger asChild let:builder>
         <Button
             variant="ghost"
@@ -112,6 +119,7 @@
     <DropdownMenu.Content>
         <DropdownMenu.Label>Actions</DropdownMenu.Label>
         <DropdownMenu.Separator />
+        <!-- je nach dem ob es ein File oder ein Folder ist werden verschiedene meneus gerendert-->
         {#if "child" in file_folder}
             <DropdownMenu.Item on:click={() => dialog.openDialog()}>
                 Create Folder</DropdownMenu.Item
@@ -131,4 +139,5 @@
         {/if}
     </DropdownMenu.Content>
 </DropdownMenu.Root>
+<!-- hier ist wieder das dialog was bei dialog.openDialog() auf geht -->
 <CreateFolderDialog bind:this={dialog} rootFolder={getRootFolder()} />

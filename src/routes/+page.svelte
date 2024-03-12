@@ -1,12 +1,13 @@
 <script lang="ts">
+    // das ist die Startseite
+
     import { Button } from "$lib/components/ui/button";
     import * as database from "$lib/database";
     import * as googleDriveTransfer from "$lib/googleDriveTransfer";
 
     import * as Card from "$lib/components/ui/card";
 
-
-    import {onMount} from 'svelte';
+    import { onMount } from "svelte";
     import { redirect } from "@sveltejs/kit";
     import { goto } from "$app/navigation";
 
@@ -14,22 +15,33 @@
 
     let authorizeButtonVisible = false;
 
-    const CLIENT_ID = "410214321825-o40h4kkrj2j6cnuguu88qn4i3f7ve5fg.apps.googleusercontent.com";
+    // die Google Drive API Konfigurationen
+
+    const CLIENT_ID =
+        "410214321825-o40h4kkrj2j6cnuguu88qn4i3f7ve5fg.apps.googleusercontent.com";
     const API_KEY = "AIzaSyAieD4rFf6p0GTutU8VGB1uT4PBX7RHWL4";
-    const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
-    const SCOPES = 'https://www.googleapis.com/auth/drive';
+    const DISCOVERY_DOC =
+        "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest";
+    const SCOPES = "https://www.googleapis.com/auth/drive";
 
     let tokenClient: GoogleApiOAuth2TokenObject;
     let gapiInited = false;
     let gisInited = false;
 
+    /**
+     * Läd die Bibliotheken neu, da die Page reloaded wurde
+     * Führe die gapiLoaded() und gisLoaded() Funktion aus nachdem die Google Bibliotheken geladen wurden
+     */
     onMount(() => {
-        loadScript('https://apis.google.com/js/api.js', gapiLoaded);
-        loadScript('https://accounts.google.com/gsi/client', gisLoaded);
+        loadScript("https://apis.google.com/js/api.js", gapiLoaded);
+        loadScript("https://accounts.google.com/gsi/client", gisLoaded);
     });
+    /**
+     * Führe die gapiLoaded() und gisLoaded() Funktion aus nachdem die Google Bibliotheken geladen wurden
+     */
 
     function loadScript(src, callback) {
-        const script = document.createElement('script');
+        const script = document.createElement("script");
         script.async = true;
         script.defer = true;
         script.src = src;
@@ -38,15 +50,16 @@
     }
 
     /**
-     * Callback after api.js is loaded.
+     * Callback nachdem die Google Identifikations Dienste geladen sind
      */
     function gapiLoaded() {
-        gapi.load('client', initializeGapiClient);
+        gapi.load("client", initializeGapiClient);
     }
 
     /**
-     * Callback after the API client is loaded. Loads the
-     * discovery doc to initialize the API.
+     * Callback nachdem der API Client geladen wurde
+     * Danach Lade die Discovery Dokumente um die API zu initialisieren
+
      */
     async function initializeGapiClient() {
         await gapi.client.init({
@@ -56,78 +69,82 @@
         gapiInited = true;
         maybeEnableButtons().then();
 
-        const authToken = getCookie('auth_token');
+        const authToken = getCookie("auth_token");
         if (authToken) {
-            gapi.client.setToken({access_token: authToken});
+            gapi.client.setToken({ access_token: authToken });
         }
     }
 
     /**
-     * Callback after Google Identity Services are loaded.
+     * Callback nachdem die google Bibliothek geladen wurde
      */
     function gisLoaded() {
         tokenClient = google.accounts.oauth2.initTokenClient({
             client_id: CLIENT_ID,
             scope: SCOPES,
-            callback: '', // defined later
+            callback: "",
         });
         gisInited = true;
         maybeEnableButtons();
     }
 
     /**
-     * Enables user interaction after all libraries are loaded.
+     *  guckt ob die Bibliotheken geladen sind und wenn ja dann wird zur authentication Button enabled
      */
     async function maybeEnableButtons() {
         if (gapiInited && gisInited) {
             authorizeButtonVisible = true;
+            // die Database wird initialisiert
             await googleDriveTransfer.initDatabase();
         }
     }
 
     /**
-     *  Sign in the user upon button click.
+     * logt den user ein
      */
     async function handleAuthClick() {
         tokenClient.callback = async (resp) => {
             if (resp.error !== undefined) {
-                throw (resp);
+                throw resp;
             }
 
-            const authToken = resp.access_token; // Assuming the token is in resp.access_token
-            document.cookie = `auth_token=${authToken};max-age=3600;secure;samesite=strict`; // This sets a cookie that lasts for 1 hour
+            const authToken = resp.access_token;
+            document.cookie = `auth_token=${authToken};max-age=3600;secure;samesite=strict`;
 
             await googleDriveTransfer.initDatabase();
-                    
         };
 
         if (gapi.client.getToken() === null) {
-            // Prompt the user to select a Google Account and ask for consent to share their data
-            // when establishing a new session.
-            tokenClient.requestAccessToken({prompt: 'consent'});
+            tokenClient.requestAccessToken({ prompt: "consent" });
         } else {
-            // Skip display of account chooser and consent dialog for an existing session.
-            tokenClient.requestAccessToken({prompt: ''});
+            tokenClient.requestAccessToken({ prompt: "" });
         }
 
-            if(await googleDriveTransfer.getWebhookUrl() == "undefined" || await googleDriveTransfer.getWebhookUrl() == "" ) {
-             goto("/signup");
-                        
-            }
-        else {
+        // wenn es ein Webhook gibt dann wird der user auf die filebrowser seite weitergeleitet
+        // ansonsten auf die signup seite
+        if (
+            (await googleDriveTransfer.getWebhookUrl()) == "undefined" ||
+            (await googleDriveTransfer.getWebhookUrl()) == ""
+        ) {
+            goto("/signup");
+        } else {
             console.log(await googleDriveTransfer.getWebhookUrl());
-            goto("/filebrowser")
+            goto("/filebrowser");
         }
     }
 
+    /**
+     * Gibt einen Cookie zurück
+     * @param name der name des Cookies
+     */
     function getCookie(name: string) {
-        let cookieArray = document.cookie.split(';'); // Split the cookie string into individual cookies
-        for(let i = 0; i < cookieArray.length; i++) {
+        let cookieArray = document.cookie.split(";"); // Split the cookie string into individual cookies
+        for (let i = 0; i < cookieArray.length; i++) {
             let cookie = cookieArray[i];
-            while (cookie.charAt(0) === ' ') {
+            while (cookie.charAt(0) === " ") {
                 cookie = cookie.substring(1); // Trim leading whitespace
             }
-            if (cookie.indexOf(name + '=') === 0) {
+            if (cookie.indexOf(name + "=") === 0) {
                 return cookie.substring(name.length + 1, cookie.length); // Extract and return the cookie value
             }
         }
@@ -150,4 +167,3 @@
         >
     </Card.Root>
 </div>
-

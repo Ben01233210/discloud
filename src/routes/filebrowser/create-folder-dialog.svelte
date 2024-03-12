@@ -7,13 +7,15 @@
     import { addFolder, type Folder } from "$lib/database";
     import { getBasefile } from "$lib/database";
     import  data from "./file-store";
+    // function die auf dem Component aufgerufen wird und ihn oeffnet
     export function openDialog() {
         open = true;
     }
     export let rootFolder: Folder = {name: "base", path: "base", child: [], parent: null}
     let open = false;
-
     let folderName: string;
+    // laed den neuen Folder in discord und unsere interne datenbank hoch
+    // runnt wenn der Button gedrueckt wird
     function onSubmit() {
         open = false;
 
@@ -34,6 +36,7 @@
         <div class="grid gap-4 py-4">
             <div class="grid grid-cols-4 items-center gap-4">
                 <Label for="name" class="text-right">Name</Label>
+                <!-- Input fuer den Foldernamen-->
                 <Input id="name" bind:value={folderName} class="col-span-3" />
             </div>
             <Dialog.Footer>

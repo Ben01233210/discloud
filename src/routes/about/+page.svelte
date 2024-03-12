@@ -1,3 +1,5 @@
+
+<!-- kurz die About page-->
 <h1>About</h1>
 
 We are three students from Berlin, and this Website was created as a software project for one of our classes. It is supposed to be a free, unlimited cloud storage, which only requires you to have a Discord and a Google account, where you can upload and download files.

@@ -1,4 +1,6 @@
+
 <script lang="ts">
+// die site falls der user eine falsche url eingibt
     import { page } from '$app/stores';
 </script>
 
