@@ -1,10 +1,18 @@
 Hallo Herr Lundschien,
 
-Sie brauchen ein google konto damit mit welchem sie sich anmelden, dieses müssen wir momentan aber noch händisch freischalten, dafür müssten sie uns eine email addressse von ihnen schicken, die mit einem aktiven google konto verküpft ist. Wir schalten sie dann so schnell wie möglich frei, damit sie die Webseite nutzen können.
+Um unsere zu nutzen, brauchen sie ein google konto mit welchem sie sich anmelden, dieses müssen wir momentan aber noch händisch freischalten. 
+Dafür müssten sie uns eine email addressse von ihnen schicken, die mit einem aktiven google konto verküpft ist. Wir schalten sie dann so schnell wie möglich frei, damit sie die Webseite nutzen können.
 
-Im "about" ist die Funktionsweise unser Webseite grob erklärt.
-Für sie aber hier eine ausführliche Version + eine grobe Übersicht, wie unser code strukturiert ist und was was macht
+Weiter unten finden sie einen "about" part, dort ist die Funktionsweise unser Webseite grob erklärt.
+So wie einen einen "Tutorial" part, wo die steps zur nutzung der Webseite erklärt sind.
+Diese Texte sind von unserer Webseite, wir haben aber für sie hier nochmal eine ausführlichere Erklärung der Funktion unser Webseite und eine Erklärung unser Folderstructure vom Code.
 
+Funktion: 
+Unsere Webseite ist ein "unendlicher" cloud space, welcher sich Dateien die hochgeladen sollen werden nimmt, diese in 25mb chunks splitet und diese dann auf Discord hochläd. 
+Das hochl- und runterladen von Dateien auf Discord läuft über einen WebHook, welcher selber vor der Nutzung der Webseite, von jedem User erstellt werden muss. 
+Als Datenbank nutzen wir ein docx Dokument, welches automatisch erstellt wird, wenn man sich mit seinem google konto einlogged. Dort wird dann die Folderstructur und welche der gesplitteten Dateien zusammengehören gespeichert.
+
+Aufbau der code Folderstructure: Der code ist in lib und routes aufgeteilt. In lib sind die logic/utility Funktionen (wie z.B. Funktionen zum bearbeiten der Datenbank) drin. In routes sind die einzelnen sites (wie die Login page, oder die fileBrowser page) der Webseite, sowie die api - diese sind zum Großteil in Svelte.
 
 
 
@@ -26,3 +34,7 @@ We hope you enjoy your free, unlimited cloud storage!
 2. If you have your accounts, please open Discord and create a new server. Then open the settings for a text channel and go to integration. There you will have the option to create a new WebHook. Please do so and click on the WebHook, to access the WebHook-URL, you will need this later.
 3. Now go to discloud-neon.vercel.app and log in with your Google account. If this is the first time logging in, you will be asked to insert a WebHook-URL, here you paste the URL from step 2.
 4. Your Discloud is now ready
+
+
+KI:
+ChatGPT wurde zur Identifizierung und Behebung von Problemen verwendet.
