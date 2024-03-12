@@ -1,7 +1,13 @@
 
 !!!Falls Bugs auftreten: Seite neu laden!!!
+
 !!Wenn sie Dateien in Ordner hochladen: Seite neu laden. Dann werden sie angezeigt (meistens)!!
+
 !Dateien über den blauen button hochladen funktioniert gut, files in folder zu adden, klappt nur manchmal!
+
+!Unsere Website ist auch online unter https://discloud-neon.vercel.app/
+
+!Unsere Code ist auch public auf Github verfuegbar: https://github.com/Ben01233210/discloud
 
 Hallo Herr Lundschien,
 
@@ -43,3 +49,5 @@ We hope you enjoy your free, unlimited cloud storage!
 
 KI:
 ChatGPT wurde zur Identifizierung und Behebung von Problemen verwendet.
+
+
