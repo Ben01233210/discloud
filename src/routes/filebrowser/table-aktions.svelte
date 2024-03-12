@@ -43,7 +43,11 @@
             const downloadUrl = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = downloadUrl;
-            a.download = "downloaded-file";
+            let name = path.split("/").pop();
+            if (name == undefined) {
+                name = "file";
+            }
+            a.download = name;
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(downloadUrl);
