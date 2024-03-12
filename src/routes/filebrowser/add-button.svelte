@@ -1,4 +1,5 @@
 <script lang="ts">
+// Der Blaue Button Component
     import { Button } from "$lib/components/ui/button";
 
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
@@ -28,6 +29,7 @@
     });
 
     let files: FileList;
+// immer wenn sich die Files aendern wird dieser block code gerunnt. Er laed die Files in discord und unsere interne datenbank hoch
     $: if (files) {
         getWebhookUrl().then((webhookUrl) => {
             for (const file of files) {
@@ -47,12 +49,16 @@
     }
 </script>
 
+<!-- input fuer die Files -->
 <input bind:files hidden id="selector" multiple type="file" />
+<!-- das Gesamte dropdownmenu-->
 <DropdownMenu.Root>
+    <!-- oeffnung des Dropdownmenus -->
     <DropdownMenu.Trigger asChild let:builder>
     <Button builders={[builder]} class="rounded-full">+</Button>
   </DropdownMenu.Trigger>
     <DropdownMenu.Content>
+        <!-- oeffnung des File Inputs-->
         <DropdownMenu.Item
             on:click={() => document.getElementById("selector")?.click()}
             >Add File</DropdownMenu.Item
@@ -60,4 +66,5 @@
         <DropdownMenu.Item on:click={() => {dialog.openDialog()}}>Add Folder</DropdownMenu.Item>
     </DropdownMenu.Content>
 </DropdownMenu.Root>
+<!-- componet fuer den Dialog also das abfragen von dem Folder name. Es erscheint aber erst wenn dialog.openDialog() gerunnt wird -->
 <CreateFolderDialog bind:this={dialog} rootFolder={rootFolder} />

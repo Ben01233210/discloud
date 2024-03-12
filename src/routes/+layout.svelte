@@ -1,5 +1,6 @@
 <script>
     import "../app.css";
+    // das ist das navigation menu das wird ueber jeder seite angezeigt 
 </script>
 
 <div class="bg-background">
