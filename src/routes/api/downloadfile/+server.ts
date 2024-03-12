@@ -4,8 +4,7 @@ import { downloadFile } from "$lib/discordFileTransfer";
 export const POST: RequestHandler = async ({request}) => {
     console.log(request)
     const {urls} = await request.json();
-
-    const file = await downloadFile(urls)
+    const file = await downloadFile(urls);
 
     const headers = {
         'Content-Type': 'application/octet-stream',

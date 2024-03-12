@@ -7,7 +7,8 @@
     import dataStore from "./file-store";
 
     console.log(getBasefile());
-    
+
+    // die Google Drive API Konfigurationen
     const CLIENT_ID = "410214321825-o40h4kkrj2j6cnuguu88qn4i3f7ve5fg.apps.googleusercontent.com";
     const API_KEY = "AIzaSyAieD4rFf6p0GTutU8VGB1uT4PBX7RHWL4";
     const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
@@ -17,11 +18,18 @@
     let gapiInited = false;
     let gisInited = false;
 
+    /**
+     * Läd die Bibliotheken neu, da die Page reloaded wurde
+     * Führe die gapiLoaded() und gisLoaded() Funktion aus nachdem die Google Bibliotheken geladen wurden
+     */
     onMount(() => {
         loadScript('https://apis.google.com/js/api.js', gapiLoaded);
         loadScript('https://accounts.google.com/gsi/client', gisLoaded);
     });
 
+    /**
+     * Führe die gapiLoaded() und gisLoaded() Funktion aus nachdem die Google Bibliotheken geladen wurden
+     */
     function loadScript(src, callback) {
         const script = document.createElement('script');
         script.async = true;
@@ -32,15 +40,15 @@
     }
 
     /**
-     * Callback after api.js is loaded.
+     * Callback nachdem die api.js Bibliothek geladen wurde
      */
     function gapiLoaded() {
         gapi.load('client', initializeGapiClient);
     }
 
     /**
-     * Callback after the API client is loaded. Loads the
-     * discovery doc to initialize the API.
+     * Callback nachdem der API Client geladen wurde
+     * Danach Lade die Discovery Dokumente um die API zu initialisieren
      */
     async function initializeGapiClient() {
         await gapi.client.init({
@@ -57,7 +65,7 @@
     }
 
     /**
-     * Callback after Google Identity Services are loaded.
+     * Callback nachdem die Google Identifikations Dienste geladen sind
      */
     function gisLoaded() {
         tokenClient = google.accounts.oauth2.initTokenClient({
@@ -70,7 +78,7 @@
     }
 
     /**
-     * Enables user interaction after all libraries are loaded.
+     * initialisiert die Datenbank, wenn die Bibliotheken geladen wurden
      */
     async function maybeInitDatabase() {
         if (gapiInited && gisInited) {
@@ -82,6 +90,10 @@
         }
     }
 
+    /**
+     * Gibt einen Cookie zurück
+     * @param name der name des Cookies
+     */
     function getCookie(name: string) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);

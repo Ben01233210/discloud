@@ -8,45 +8,34 @@ let databaseFileId: string;
 let webhook: string;
 let databaseInited = false;
 
-// /**
-//  *  Sign out the user upon button click.
-//  */
-// export function handleSignoutClick() {
-//     const token = gapi.client.getToken();
-//     if (token !== null) {
-//         google.accounts.oauth2.revoke(token.access_token);
-//         gapi.client.setToken(null);
-//     }
-// }
-
+/**
+ * Initialisiert die Datenbank
+ * Läd die Datenbank aus der Google Drive Textdatei oder erstellt eine neue
+ */
 export async function initDatabase() {
     if (!databaseInited) {
-        const fileId = await fileExists(DATABASE_FILE_NAME);
+        const fileId = await getDatabaseId(DATABASE_FILE_NAME);
 
+        // Wenn eine Datenbank existiert dann lade diese, ansonsten erstelle eine neue
         if (fileId) {
-            // console.log("found existing database");
             databaseFileId = fileId;
             webhook = await getWebhookUrl();
         } else {
-            // console.log("create new database file");
             await createDatabaseFile();
         }
 
+        // Initialisiere die Datenbank funktionen und makiere die Datenbank als initialisiert
         database.init(await getDatabaseContent());
         databaseInited = true;
-
-        // await test();
     }
     console.log("Database inited");
 }
 
-async function test() {
-    getDatabaseContent().then((result) => {
-        console.log(result);
-    })
-}
-
+/**
+ * Erstellt die Google Drive Textdatei Datenbank
+ */
 export async function createDatabaseFile() {
+    // Die Http Anfrage an Google um eine Textdatei zu erstellen
     const response = await gapi.client.drive.files.create({
         resource: {
             "name": DATABASE_FILE_NAME,
@@ -56,13 +45,20 @@ export async function createDatabaseFile() {
 
     databaseFileId = response.result.id ?? "";
 
+    // schreibt den Standard Datenbank Quellcode in die Datenbank
     const content = database.defaultDatabaseString;
     database.setFileString(content);
 
+    // Aktualisiere die Google Drive Datei
     await updateDatabaseContent(content);
 }
 
-export async function fileExists(fileName: string): Promise<string | undefined> {
+/**
+ * Gibt die Datenbank Datei id aus Google Drive zurück, wenn diese existiert, ansonsten gibt es undefined zurück
+ * @param fileName der DateiName der Datenbank
+ */
+export async function getDatabaseId(fileName: string): Promise<string | undefined> {
+    // Http Anfrage um die Google Drive Datenbank zu finden
     const response = await gapi.client.drive.files.list({
         "q": `name='${fileName}' and trashed=false`,
         "spaces": "drive",
@@ -77,7 +73,12 @@ export async function fileExists(fileName: string): Promise<string | undefined> 
     }
 }
 
+/**
+ * Aktualisiert den Inhalt der Datenbank
+ * @param content der Inhalt der Datenbank ohne der Webhook Url
+ */
 export async function updateDatabaseContent(content: string) {
+    // Fügt den Webhook mit dem Inhalt zusammen
     content = "webhookUrl: " + webhook + "\n" + content;
 
     try {
@@ -94,11 +95,18 @@ export async function updateDatabaseContent(content: string) {
     }
 }
 
+/**
+ * Fügt den Webhook zur Datenbank hinzu
+ * @param webhookUrl die Webhook Url aus Discord
+ */
 export async function addWebhook(webhookUrl: string) {
     webhook = webhookUrl;
     await updateDatabaseContent(database.fileString);
 }
 
+/**
+ * Gibt die Webhook Url aus der Google Drive Datenbank zurück
+ */
 export async function getWebhookUrl() {
     try {
         const response = await gapi.client.drive.files.get({
@@ -116,6 +124,9 @@ export async function getWebhookUrl() {
     }
 }
 
+/**
+ * Gibt den Datenbank Inhalt ohne dem Webhook zurück
+ */
 export async function getDatabaseContent() {
     try {
         const response = await gapi.client.drive.files.get({
