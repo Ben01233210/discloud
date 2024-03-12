@@ -6,9 +6,9 @@
 !Dateien über den blauen button hochladen funktioniert gut, files in folder zu adden, klappt nur manchmal!
 !Man braucht evtl. ein kleines bisschen geduld...!
 
-!Unsere Website ist auch online unter https://discloud-neon.vercel.app/
+!Unsere Website ist online unter https://discloud-neon.vercel.app/
 
-!Unsere Code ist auch public auf Github verfuegbar: https://github.com/Ben01233210/discloud
+!Unsere Code ist public auf Github verfuegbar: https://github.com/Ben01233210/discloud
 
 Hallo Herr Lundschien,
 
