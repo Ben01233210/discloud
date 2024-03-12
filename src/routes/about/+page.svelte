@@ -1,11 +1,43 @@
 
 <!-- kurz die About page-->
-<h1>About</h1>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
 
-We are three students from Berlin, and this Website was created as a software project for one of our classes. It is supposed to be a free, unlimited cloud storage, which only requires you to have a Discord and a Google account, where you can upload and download files.
+    .container {
+        max-width: 40%;
+        margin: 0 auto;
+        padding: 20px;
+    }
 
-The reason you require a discord account is, that we take the files you want to upload, split them into 25 Megabyte chunks, and then upload these to the discord server of your choice. Then when you want to download your file, we take all these chunks and combine them into the original file.
+    h1 {
+        color: black;
+        font-weight: bold;
+        font-size: 30px;
+        margin-bottom: 30px;
+    }
 
-But for the program to know which chunks to combine, we needed a database, which is why you need to log in with your Google account. Upon doing that, a text file is created in your Google Drive, serving as the database - We know it is a bit ironic that you need another cloud storage for this one to work. 
+    p {
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+</style>
 
-We hope you enjoy your free, unlimited cloud storage!
+<div class="container">
+    <h1>About</h1>
+
+    <p>Welcome to our page!</p>
+
+    <p>We are three students from Berlin, and we've created this website as a software project for one of our classes. Our aim was to provide a free and unlimited cloud storage solution, requiring only a Discord and a Google account. With our service, you can upload and download files without worrying about storage limitations.</p>
+
+    <p>To facilitate this, we split uploaded files into 25-megabyte chunks and store them on the Discord server of your choice. When you download a file, these chunks are reassembled to restore the original file.</p>
+
+    <p>To manage the chunk mapping, we utilize a database, hence the requirement to log in with your Google account. Upon logging in, a text file is created in your Google Drive, serving as the database - a bit ironic that another cloud storage is needed for this one to work, isn't it?</p>
+
+    <p>We hope you enjoy our free, unlimited cloud storage!</p>
+</div>

@@ -138,32 +138,62 @@
      * @param name der name des Cookies
      */
     function getCookie(name: string) {
-        let cookieArray = document.cookie.split(";"); // Split the cookie string into individual cookies
+        let cookieArray = document.cookie.split(";");
         for (let i = 0; i < cookieArray.length; i++) {
             let cookie = cookieArray[i];
             while (cookie.charAt(0) === " ") {
-                cookie = cookie.substring(1); // Trim leading whitespace
+                cookie = cookie.substring(1);
             }
             if (cookie.indexOf(name + "=") === 0) {
-                return cookie.substring(name.length + 1, cookie.length); // Extract and return the cookie value
+                return cookie.substring(name.length + 1, cookie.length);
             }
         }
-        return ""; // Return empty string if the cookie is not found
+        return "";
     }
 </script>
 
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 60%;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    h1 {
+        color: black;
+        font-weight: bold;
+        font-size: 30px;
+        margin-bottom: 30px;
+    }
+
+    p {
+        line-height: 1.6;
+        margin-bottom: 15px;
+        font-size: 20px;
+    }
+</style>
+
 <div class="w-full h-full text-foreground">
-    <Card.Root class="flex flex-col gap-2 m-4 p-4">
-        <Card.Title class="text-center">Discloud</Card.Title>
-        <p>
-            Discloud is a free cloud storage platform that allows you to
-            securely store and access your files from anywhere. With Discloud,
-            you can easily upload, organize, and share your documents, photos,
-            videos, and more. Experience the convenience and flexibility of
-            cloud storage with Discloud.
-        </p>
-        <Button on:click={handleAuthClick} disabled={!authorizeButtonVisible}
-            >Login</Button
-        >
-    </Card.Root>
+    <div class="container">
+        <Card.Root class="flex flex-col gap-2 m-4 p-4">
+            <Card.Title class="text-center"> <h1>Discloud</h1></Card.Title>
+            <p>
+                Discloud is a free cloud storage platform that allows you to
+                securely store and access your files from anywhere. With Discloud,
+                you can easily upload, organize, and share your documents, photos,
+                videos, and more. Experience the convenience and flexibility of
+                cloud storage with Discloud.
+            </p>
+            <Button on:click={handleAuthClick} disabled={!authorizeButtonVisible}>Login</Button>
+        </Card.Root>
+    </div>
 </div>
+
