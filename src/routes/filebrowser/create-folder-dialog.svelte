@@ -10,15 +10,17 @@
     export function openDialog() {
         open = true;
     }
-    export let rootFolder: Folder;
+    export let rootFolder: Folder = {name: "base", path: "base", child: [], parent: null}
     let open = false;
 
     let folderName: string;
     function onSubmit() {
         open = false;
-        addFolder(folderName, "base");
 
+        console.log(rootFolder.path);
+        addFolder(folderName, rootFolder.path);
         
+
         getBasefile().then((args) => {data.set(args.child ? args.child : [])} )
     }
 </script>

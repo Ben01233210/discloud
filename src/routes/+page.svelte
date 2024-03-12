@@ -110,11 +110,12 @@
             tokenClient.requestAccessToken({prompt: ''});
         }
 
-            if(await googleDriveTransfer.getWebhookUrl() == "undefined") {
+            if(await googleDriveTransfer.getWebhookUrl() == "undefined" || await googleDriveTransfer.getWebhookUrl() == "" ) {
              goto("/signup");
                         
             }
         else {
+            console.log(await googleDriveTransfer.getWebhookUrl());
             goto("/filebrowser")
         }
     }

@@ -8,10 +8,18 @@
     import * as Dialog from "$lib/components/ui/dialog";
     import { Label } from "$lib/components/ui/label";
     import { Input } from "$lib/components/ui/input";
+    import CreateFolderDialog from "./create-folder-dialog.svelte";
+    import type { _File } from "$lib/database";
+    import tableContent from "./file-store";
 
-    export let file_folder: database._File | database.Folder;
-
-    function createFolder() {}
+    export let file_folder: database._File | database.Folder = {
+        child: [],
+        name: "base",
+        path: "base",
+        parent: null,
+    } as database.Folder;
+    let dialog: CreateFolderDialog;
+    let files: FileList;
 
     async function downloadFile(path: string) {
         const urls = await database.getSubfiles(path);
@@ -48,8 +56,43 @@
         await database.deleteItem(filePath);
         // TODO: delete file from website
     }
+    function getRootFolder(): database.Folder {
+        console.log(file_folder);
+        if ("child" in file_folder) {
+            return file_folder;
+        } else {
+            return {
+                child: [],
+                name: "base",
+                path: "base",
+                parent: null,
+            } as database.Folder;
+        }
+    }
+
+    $: if (files) {
+        googleDriveTransfer.getWebhookUrl().then((webhookUrl) => {
+            for (const file of files) {
+                discordFileTransfer
+                    .uploadFile(webhookUrl, file, file.name)
+                    .then((messageIds) => {
+                        const path = getRootFolder().path;
+                        console.log(path);
+                        database
+                            .addFile(file.name, path, messageIds)
+                            .then(() => console.log("File added"));
+                    });
+
+
+                database.getBasefile().then((args) => {
+                    tableContent.set(args.child ? args.child : []);
+                });
+            }
+        });
+    }
 </script>
 
+<input bind:files hidden id="files" multiple type="file" />
 <DropdownMenu.Root>
     <DropdownMenu.Trigger asChild let:builder>
         <Button
@@ -66,8 +109,13 @@
         <DropdownMenu.Label>Actions</DropdownMenu.Label>
         <DropdownMenu.Separator />
         {#if "child" in file_folder}
-            <DropdownMenu.Item on:click={() => createFolder()}>
+            <DropdownMenu.Item on:click={() => dialog.openDialog()}>
                 Create Folder</DropdownMenu.Item
+            >
+
+            <DropdownMenu.Item
+                on:click={() => document.getElementById("files")?.click()}
+                >Add File</DropdownMenu.Item
             >
         {:else}
             <DropdownMenu.Item on:click={() => downloadFile(file_folder.path)}
@@ -79,3 +127,4 @@
         {/if}
     </DropdownMenu.Content>
 </DropdownMenu.Root>
+<CreateFolderDialog bind:this={dialog} rootFolder={getRootFolder()} />
